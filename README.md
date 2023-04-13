@@ -4,8 +4,7 @@ Pymol plugin to send the current session to Nanome via Quickdrop
 
 # How to install and use
 
-- Download the latest release archive from [here](https://github.com/nanome-ai/Pymol-plugin-Nanome-Quickdrop/releases/latest)
-- Open Pymol Plugin Manager → Install New Plugin tab → Install from local file → select the download .zip file
+- Open Pymol Plugin Manager → Install New Plugin tab → Install from PyMOLWiki or any URL → [https://github.com/nanome-ai/Pymol-plugin-Nanome-Quickdrop/blob/master/SendToNanome.py](https://github.com/nanome-ai/Pymol-plugin-Nanome-Quickdrop/blob/master/SendToNanome.py) → Fetch
 
 ### Once installed, you can start the plugin
 
