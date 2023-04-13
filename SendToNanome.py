@@ -110,13 +110,14 @@ def make_dialog():
         global quickdrop
 
         quickdrop.send_file(filepath)
+        
+        dialog.close()
         gif.stop()
 
         gif_temp.close()
         #TODO: Fix this
         #os.remove(gif_temp.name)
         os.remove(filepath)
-        dialog.close()
 
     def send_to_nanome():
         import threading
