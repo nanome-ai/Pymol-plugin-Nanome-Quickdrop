@@ -113,7 +113,8 @@ def make_dialog():
         gif.stop()
 
         gif_temp.close()
-        os.remove(gif_temp.name)
+        #TODO: Fix this
+        #os.remove(gif_temp.name)
         os.remove(filepath)
         dialog.close()
 
