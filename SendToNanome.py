@@ -177,7 +177,7 @@ class QuickDropAPI():
             return r_token
         
         filename = "PymolSession_" + datetime.now().strftime("%d-%m-%Y_%H-%M-%S") + ".pse"
-        add_request_dict = {"token": self.token, "filenames": [filename]}
+        add_request_dict = {"token": self.token, "filenames": [filename], "source": "api:pymol-plugin"}
         
         # Ask for S3 URL to upload the file
         r_send = requests.post(self.add_url, json=add_request_dict, timeout=5.0)
@@ -195,7 +195,7 @@ class QuickDropAPI():
         
         if r_upload.ok:
             # Notify upload done
-            update_request_dict = {"token": self.token}
+            update_request_dict = {"token": self.token, "source": "api:pymol-plugin"}
             r_update = requests.post(self.update_url, json=update_request_dict, timeout=5.0)
             if r_update.ok:
                 print("Finished uploading session file")
