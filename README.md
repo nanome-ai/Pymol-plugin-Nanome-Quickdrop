@@ -2,6 +2,24 @@
 
 Pymol plugin to send the current session to Nanome via Quickdrop
 
+# How to install and use
+
+- Download the latest release archive from [here](https://github.com/nanome-ai/Pymol-plugin-Nanome-Quickdrop/releases/latest)
+- Open Pymol Plugin Manager → Install New Plugin tab → Install from local file → select the download .zip file
+
+### Once installed, you can start the plugin
+
+Plugin → Nanome Quickdrop Plugin
+
+### Usage
+
+- Login with your Nanome credentials
+- Click on "Send session to Nanome" button
+- If Nanome is not already opened, the next time you open Nanome it will load the Pymol session file
+- If Nanome is opened, you should see the Pymol session file loaded
+
+# Example
+
 ![alt text](https://i.postimg.cc/pyR9KhTP/Pymol-Example-quickdrop.jpg)
 ![alt text](https://i.postimg.cc/fSzJsFFV/Nanome-Example-quickdrop.jpg)
 
