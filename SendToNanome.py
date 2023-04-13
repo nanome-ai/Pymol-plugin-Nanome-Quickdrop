@@ -34,8 +34,8 @@ def run_plugin_gui():
 
 
 def make_login_dialog():
-    from pymol.Qt import QtWidgets
     from pymol import cmd
+    from pymol.Qt import QtWidgets
 
     names = cmd.get_object_list()
     if len(names) < 1:
@@ -80,10 +80,11 @@ def make_login_dialog():
 
 def make_dialog():
     # entry point to PyMOL's API
-    from pymol import cmd
     import tempfile
+
     import requests
-    from pymol.Qt import QtWidgets, QtGui, QtCore
+    from pymol import cmd
+    from pymol.Qt import QtCore, QtGui, QtWidgets
 
     loading_gif = requests.get(loading_gif_url)
     gif_temp = tempfile.NamedTemporaryFile(suffix=".gif", delete=False)
@@ -112,12 +113,12 @@ def make_dialog():
         quickdrop.send_file(filepath)
         
         dialog.close()
-        gif.stop()
+        # gif.stop()
 
         gif_temp.close()
         #TODO: Fix this
         #os.remove(gif_temp.name)
-        os.remove(filepath)
+        # os.remove(filepath)
 
     def send_to_nanome():
         import threading
@@ -165,8 +166,9 @@ class QuickDropAPI():
             return r.reason
 
     def send_file(self, filepath):
-        import requests
         from datetime import datetime
+
+        import requests
         
         if self.token is None:
             r_token = self.get_nanome_token()
