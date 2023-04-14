@@ -22,11 +22,11 @@ quickdrop = None
 def run_plugin_gui():
     global dialog
     global login_dialog
+    
+    dialog = make_dialog()
 
     if login_dialog is None:
         login_dialog = make_login_dialog()
-
-    dialog = make_dialog()
 
     if login_dialog is not None:
         login_dialog.show()
@@ -112,7 +112,7 @@ def make_dialog():
         quickdrop.send_file(filepath)
         
         dialog.close()
-        # gif.stop()
+        gif.stop()
 
         gif_temp.close()
         #TODO: Fix this
