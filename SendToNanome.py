@@ -26,8 +26,7 @@ def run_plugin_gui():
     if login_dialog is None:
         login_dialog = make_login_dialog()
 
-    if dialog is None:
-        dialog = make_dialog()
+    dialog = make_dialog()
 
     if login_dialog is not None:
         login_dialog.show()
