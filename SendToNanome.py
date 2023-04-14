@@ -122,6 +122,7 @@ def make_dialog():
 
     def send_to_nanome():
         import threading
+        import platform
         gif.start()
 
         temp_session = tempfile.NamedTemporaryFile(suffix=".pse", delete=False)
@@ -130,10 +131,13 @@ def make_dialog():
 
         print("Sending current session file to Nanome QuickDrop")
         gif.start()
-
-        # Start a thread to send the session file to Nanome quickdrop
-        daemon = threading.Thread(target=to_quickdrop, args=(temp_session.name,), daemon=True)
-        daemon.start()
+        
+        if platform.system() == "Darwin":
+            to_quickdrop(temp_session.name)
+        else:
+            # Start a thread to send the session file to Nanome quickdrop
+            daemon = threading.Thread(target=to_quickdrop, args=(temp_session.name,), daemon=True)
+            daemon.start()
 
     buttonSend = QtWidgets.QPushButton('Send session to Nanome', dialog)
     buttonSend.clicked.connect(send_to_nanome)
