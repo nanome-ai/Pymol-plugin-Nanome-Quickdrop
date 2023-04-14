@@ -28,8 +28,10 @@ def run_plugin_gui():
     if login_dialog is None:
         login_dialog = make_login_dialog()
 
-    if login_dialog is not None:
+    if quickdrop is None or quickdrop.token is None:
         login_dialog.show()
+    else:
+        dialog.show()
 
 
 def make_login_dialog():
@@ -120,8 +122,8 @@ def make_dialog():
         # os.remove(filepath)
 
     def send_to_nanome():
-        import threading
         import platform
+        import threading
         gif.start()
 
         temp_session = tempfile.NamedTemporaryFile(suffix=".pse", delete=False)
@@ -177,6 +179,7 @@ class QuickDropAPI():
             r_token = self.get_nanome_token()
         
         if self.token == 0:
+            self.token = None
             return r_token
         
         filename = "PymolSession_" + datetime.now().strftime("%d-%m-%Y_%H-%M-%S") + ".pse"
