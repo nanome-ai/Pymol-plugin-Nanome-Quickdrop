@@ -11,7 +11,7 @@ def __init_plugin__(app=None):
     Add an entry to the PyMOL "Plugin" menu
     '''
     from pymol.plugins import addmenuitemqt
-    addmenuitemqt('Nanome Quickdrop Plugin', run_plugin_gui)
+    addmenuitemqt('View in Nanome XR', run_plugin_gui)
 
 
 # global reference to avoid garbage collection of our dialog
@@ -45,7 +45,7 @@ def make_login_dialog():
         return
 
     login_dialog = QtWidgets.QDialog()
-    login_dialog.setWindowTitle("Nanome login")
+    login_dialog.setWindowTitle("Nanome Login Credentials")
 
     textName = QtWidgets.QLineEdit(login_dialog)
     textPass = QtWidgets.QLineEdit(login_dialog)
