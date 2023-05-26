@@ -4,7 +4,7 @@
 import os
 
 loading_gif_url = "https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif"
-
+nanome_logo_url = "https://pbs.twimg.com/profile_images/988544354162651137/HQ7nVOtg_400x400.jpg"
 
 def __init_plugin__(app=None):
     '''
@@ -91,6 +91,11 @@ def make_dialog():
     gif_temp = tempfile.NamedTemporaryFile(suffix=".gif", delete=False)
     with open(gif_temp.name, "wb") as f:
         f.write(loading_gif.content)
+    
+    nanome_jpg = requests.get(nanome_logo_url)
+    jpg_temp = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
+    with open(jpg_temp.name, "wb") as f:
+        f.write(nanome_jpg.content)
 
     # create a new Window
     dialog = QtWidgets.QDialog()
@@ -106,6 +111,7 @@ def make_dialog():
     gif = QtGui.QMovie(gif_temp.name)
     gif.setScaledSize(QtCore.QSize(305, 200))
     label.setMovie(gif)
+    label.hide()
 
     #Called in a thread
     def to_quickdrop(filepath):
@@ -125,6 +131,7 @@ def make_dialog():
         import platform
         import threading
         gif.start()
+        label.show()
 
         temp_session = tempfile.NamedTemporaryFile(suffix=".pse", delete=False)
         cmd.save(temp_session.name)
@@ -143,8 +150,11 @@ def make_dialog():
     buttonSend = QtWidgets.QPushButton('Send session to Nanome', dialog)
     buttonSend.clicked.connect(send_to_nanome)
     layout.addWidget(label)
+    layout.addStretch()
     layout.addWidget(buttonSend)
-
+    
+    dialog.setStyleSheet('QDialog {'
+                         'background-image: url('+jpg_temp.name+'); background-position: center center;}')
     return dialog
 
 
