@@ -4,7 +4,7 @@
 import os
 
 loading_gif_url = "https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif"
-
+nanome_logo_url = "https://pbs.twimg.com/profile_images/988544354162651137/HQ7nVOtg_400x400.jpg"
 
 def __init_plugin__(app=None):
     '''
@@ -18,16 +18,20 @@ def __init_plugin__(app=None):
 dialog = None
 login_dialog = None
 quickdrop = None
+nanome_logo_path = None
 
 def run_plugin_gui():
     global dialog
     global login_dialog
     
     dialog = make_dialog()
-
+    
     if login_dialog is None:
         login_dialog = make_login_dialog()
 
+    if login_dialog is None:
+        return
+    
     if quickdrop is None or quickdrop.token is None:
         login_dialog.show()
     else:
@@ -36,7 +40,7 @@ def run_plugin_gui():
 
 def make_login_dialog():
     from pymol import cmd
-    from pymol.Qt import QtWidgets
+    from pymol.Qt import QtWidgets, QtGui
 
     names = cmd.get_object_list()
     if len(names) < 1:
@@ -46,6 +50,7 @@ def make_login_dialog():
 
     login_dialog = QtWidgets.QDialog()
     login_dialog.setWindowTitle("Nanome Login Credentials")
+    login_dialog.setWindowIcon(QtGui.QIcon(nanome_logo_path))
 
     textName = QtWidgets.QLineEdit(login_dialog)
     textPass = QtWidgets.QLineEdit(login_dialog)
@@ -86,15 +91,23 @@ def make_dialog():
     import requests
     from pymol import cmd
     from pymol.Qt import QtCore, QtGui, QtWidgets
+    global nanome_logo_path
 
     loading_gif = requests.get(loading_gif_url)
     gif_temp = tempfile.NamedTemporaryFile(suffix=".gif", delete=False)
     with open(gif_temp.name, "wb") as f:
         f.write(loading_gif.content)
+    
+    nanome_jpg = requests.get(nanome_logo_url)
+    local_nanome_logo = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
+    nanome_logo_path = local_nanome_logo.name
+    with open(nanome_logo_path, "wb") as f:
+        f.write(nanome_jpg.content)
 
     # create a new Window
     dialog = QtWidgets.QDialog()
 
+    dialog.setWindowIcon(QtGui.QIcon(nanome_logo_path))
     dialog.setWindowTitle("Send session to Nanome")
     dialog.setWindowModality(False)
     dialog.setFixedSize(305, 200)
@@ -106,6 +119,12 @@ def make_dialog():
     gif = QtGui.QMovie(gif_temp.name)
     gif.setScaledSize(QtCore.QSize(305, 200))
     label.setMovie(gif)
+    label.hide()
+
+    label_logo = QtWidgets.QLabel()
+    pixmap = QtGui.QPixmap(nanome_logo_path).scaled(325, 325, QtCore.Qt.KeepAspectRatio)
+    label_logo.setPixmap(pixmap)
+    label_logo.show()
 
     #Called in a thread
     def to_quickdrop(filepath):
@@ -125,6 +144,8 @@ def make_dialog():
         import platform
         import threading
         gif.start()
+        label.show()
+        label_logo.hide()
 
         temp_session = tempfile.NamedTemporaryFile(suffix=".pse", delete=False)
         cmd.save(temp_session.name)
@@ -143,8 +164,10 @@ def make_dialog():
     buttonSend = QtWidgets.QPushButton('Send session to Nanome', dialog)
     buttonSend.clicked.connect(send_to_nanome)
     layout.addWidget(label)
+    layout.addWidget(label_logo)
+    layout.addStretch()
     layout.addWidget(buttonSend)
-
+   
     return dialog
 
 
