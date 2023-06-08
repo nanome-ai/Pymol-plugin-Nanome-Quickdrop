@@ -2,6 +2,7 @@
 # executed on PyMOL's startup. Only import such modules inside functions.
 
 import os
+from pymol.Qt import QtCore
 
 loading_gif_url = "https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif"
 nanome_logo_url = "https://pbs.twimg.com/profile_images/988544354162651137/HQ7nVOtg_400x400.jpg"
@@ -19,6 +20,8 @@ dialog = None
 login_dialog = None
 quickdrop = None
 nanome_logo_path = None
+sending_thread = None
+sending_worker = None
 
 def run_plugin_gui():
     global dialog
@@ -90,7 +93,7 @@ def make_dialog():
 
     import requests
     from pymol import cmd
-    from pymol.Qt import QtCore, QtGui, QtWidgets
+    from pymol.Qt import QtGui, QtWidgets
     global nanome_logo_path
 
     loading_gif = requests.get(loading_gif_url)
@@ -125,24 +128,13 @@ def make_dialog():
     pixmap = QtGui.QPixmap(nanome_logo_path).scaled(325, 325, QtCore.Qt.KeepAspectRatio)
     label_logo.setPixmap(pixmap)
     label_logo.show()
-
-    #Called in a thread
-    def to_quickdrop(filepath):
-        global quickdrop
-
-        quickdrop.send_file(filepath)
-        
+    
+    def close_dialog():
         dialog.close()
         gif.stop()
 
-        gif_temp.close()
-        #TODO: Fix this
-        #os.remove(gif_temp.name)
-        # os.remove(filepath)
-
     def send_to_nanome():
-        import platform
-        import threading
+        global sending_thread, sending_worker
         gif.start()
         label.show()
         label_logo.hide()
@@ -153,13 +145,17 @@ def make_dialog():
 
         print("Sending current session file to Nanome QuickDrop")
         gif.start()
-        
-        if platform.system() == "Darwin":
-            to_quickdrop(temp_session.name)
-        else:
-            # Start a thread to send the session file to Nanome quickdrop
-            daemon = threading.Thread(target=to_quickdrop, args=(temp_session.name,), daemon=True)
-            daemon.start()
+
+        sending_thread = QtCore.QThread()
+        sending_worker = Worker()
+        sending_worker.session_path = temp_session.name
+        sending_worker.moveToThread(sending_thread)
+        sending_thread.started.connect(sending_worker.run)
+        sending_worker.finished.connect(sending_thread.quit)
+        sending_worker.finished.connect(sending_worker.deleteLater)
+        sending_thread.finished.connect(sending_thread.deleteLater)
+        sending_thread.finished.connect(close_dialog)
+        sending_thread.start()
 
     buttonSend = QtWidgets.QPushButton('Send session to Nanome', dialog)
     buttonSend.clicked.connect(send_to_nanome)
@@ -170,6 +166,14 @@ def make_dialog():
    
     return dialog
 
+class Worker(QtCore.QObject):
+    finished = QtCore.pyqtSignal()
+    session_path = ""
+    def run(self):
+        global quickdrop
+        #Send
+        quickdrop.send_file(self.session_path)
+        self.finished.emit()
 
 class QuickDropAPI():
     def __init__(self, username, passw):
@@ -183,6 +187,8 @@ class QuickDropAPI():
     def get_nanome_token(self):
         import requests
         token_request_dict = {"login": self.username, "pass": self.password, "source": "api:pymol-plugin"}
+        self.username = None
+        self.password = None
         r = requests.post(self.login_url, json=token_request_dict, timeout=5.0)
         if r.ok:
             response = r.json()
