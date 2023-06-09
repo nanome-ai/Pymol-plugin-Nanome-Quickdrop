@@ -53,10 +53,13 @@ def make_login_dialog():
 
     login_dialog = QtWidgets.QDialog()
     login_dialog.setWindowTitle("Nanome Login Credentials")
+    login_dialog.setFixedWidth(350)
     login_dialog.setWindowIcon(QtGui.QIcon(nanome_logo_path))
 
     textName = QtWidgets.QLineEdit(login_dialog)
+    textName.setPlaceholderText("Email Address")
     textPass = QtWidgets.QLineEdit(login_dialog)
+    textPass.setPlaceholderText("Password")
     textPass.setEchoMode(QtWidgets.QLineEdit.Password)
 
     def handle_login():
