@@ -128,7 +128,7 @@ def make_dialog():
     label.hide()
 
     label_logo = QtWidgets.QLabel()
-    pixmap = QtGui.QPixmap(nanome_logo_path).scaled(325, 325, QtCore.Qt.KeepAspectRatio)
+    pixmap = QtGui.QPixmap(nanome_logo_path).scaled(325, 325, QtCore.Qt.KeepAspectRatio, transformMode=QtCore.Qt.SmoothTransformation)
     label_logo.setPixmap(pixmap)
     label_logo.show()
     
